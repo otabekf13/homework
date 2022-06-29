@@ -41,12 +41,3 @@ function submit(params) {
 
 	return user
 }
-
-
-
-// 1.navigation
-// 2.onfocus
-// 3.onblur
-// 4.onkeyup
-// 5.onkeydown
-// 6.onsubmit
