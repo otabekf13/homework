@@ -1,114 +1,81 @@
-const addTask = document.getElementById('add-task');
-const inputTask = document.getElementById('task-input');
-const allTasks = document.querySelector('.all-tasks');
-const delAll = document.getElementById('delete-all-tasks')
+const todoForm = document.querySelector('.todo-form');
+const todoInput = document.querySelector('todo-input');
+const todoItemsList = document.querySelector('todo-items');
 
-let tasks = [];
-let todoTasks = [];
-
-/*-------------------------------------------------------*/
-function Task(task) {
-	this.task = task;
-	this.completed = false;
-}
-
-/*-------------------------------------------------------*/
-function createTask(description, index) {
-	return `
-        <div class="create-task ${description.completed ? 'checked' : ''}">
-             <div class="task">${description.task}</div>
-             <div class="action">
-                  <input onclick="completedTask(${index})" class="complete" type="checkbox" 
-                        ${description.completed ? 'checked' : ''}>
-                  <span onclick="editTask(${index})" class="btn-edit"></i></span>
-                  <span onclick="deletedTask(${index})" class="delete"></i></span>
-             </div>
-        </div>          
-    `
-}
-
-/*-------------------------------------------------------*/
-function filterTasks() {
-	const activeTasks = tasks.length && tasks.filter(item => item.completed === false);
-	const completedTasks = tasks.length && tasks.filter(item => item.completed === true);
-	tasks = [...activeTasks, ...completedTasks];
-}
-
-/*-------------------------------------------------------*/
-function showTasks() {
-	allTasks.innerHTML = "";
-	if (tasks.length === 0) {
-		delAll.classList.add("hide");
-	} else {
-		delAll.classList.remove("hide");
+let todos = [];
+todoForm.addEventListener('submit',
+	function (event) {
+		event.preventDefault();
+		addTodo(todoInput.value);
 	}
-	if (tasks.length > 0) {
-		filterTasks();
-		tasks.forEach((item, index) => {
-			allTasks.innerHTML += createTask(item, index)
-		});
-		todoTasks = document.querySelectorAll('.create-task');
+)
 
+function addTodo(item) {
+	if (item !== '') {
+		const todo = {
+			id: Date.now(),
+			name: item,
+			completed: false
+		};
+		todos.push(todo);
+		addLocalStorage(todos);
+		todoInput.value = '';
 	}
 }
 
-showTasks();
+function renderTodos(todos) {
+	todoItemsList.innerHTML = '';
+	todos.forEach(function (item) {
+		const checked = item.completed ? 'checked' : null;
 
-/*-------------------------------------------------------*/
-function storage() { }
-
-/*-------------------------------------------------------*/
-function completedTask(index) {
-	tasks[index].completed = !tasks[index].completed;
-	if (tasks[index].completed) {
-		todoTasks[index].classList.add('checked')
-	} else {
-		todoTasks[index].classList.remove('checked')
-	}
-	storage();
-	showTasks();
+		const li = document.createElement('li');
+		li.setAttribute('class', 'item');
+		li.setAttribute('data-key', 'item.id');
+		if (item.completed === true) {
+			li.classList.add('checked');
+		}
+		li.innerHTML = `
+		<input type="checkbox" class="checkbox" &{checked}>
+		&{item.name}
+		<button class="delete-button">X</button>
+		`;
+		todoItemsList.append(li);
+	})
 }
 
-/*-------------------------------------------------------*/
-function deletedTask(index) {
-	todoTasks[index].classList.add('deleted')
-	setTimeout(() => {
-		tasks.splice(index, 1);
-		storage();
-		showTasks();
-	}, 500)
+function addTolocalStorage(todos) {
+	localStorage.setItem('todos', JSON.stringify(todos));
+	renderTodos(todos);
 }
 
-/*-------------------------------------------------------*/
-function editTask(index) {
-	let curTask = todoTasks[index];
-	if (!curTask.classList.contains('edit')) {
-		curTask.classList.add('edit');
-		curTask.querySelector('.task').innerHTML = `<input type="test" value="${tasks[index].task}">`;
-	} else {
-		let newTask = curTask.querySelector('.task > input').value;
-		tasks[index].task = newTask;
-		curTask.querySelector('.task').innerText = newTask;
-		curTask.classList.remove('edit');
+function getFormLocalStorage() {
+	const reference = localStorage.getItem('todos');
+	if (reference) {
+		todos = JSON.parse(reference);
+		renderTodos(todos);
 	}
 }
 
-
-/*-------------------------------------------------------*/
-addTask.addEventListener("click", () => {
-	if (inputTask.value === '') {
-	} else {
-		tasks.push(new Task(inputTask.value));
+function toggle(id) {
+	todos.forEach(function (item) {
+		if (item.id == id) {
+			item.completed = !item.completed;
+		}
+	});
+	addTolocalStorage(todos);
+}
+function deleteTodo(id) {
+	todos = todos.filter(function (item) {
+		return item.id != id;
+	});
+	addTolocalStorage();
+}
+getFormLocalStorage();
+todoItemsList.addEventListener('click', function (event) {
+	if (event.target.type === 'checkbox') {
+		toggle(event.target.parentElement.getAttribute('data-key'));
 	}
-	storage();
-	showTasks();
-	inputTask.value = '';
-
-});
-
-/*-------------------------------------------------------*/
-delAll.addEventListener("click", () => {
-	tasks = [];
-	storage();
-	showTasks();
+	if (event.target.classList.container('delete-button')) {
+		deleteTodo(event.target.parentElement.getAttribute('data-key'));
+	}
 });
