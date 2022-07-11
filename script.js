@@ -1,81 +1,42 @@
 const todoForm = document.querySelector('.todo-form');
-const todoInput = document.querySelector('todo-input');
-const todoItemsList = document.querySelector('todo-items');
+const todoInput = document.querySelector('.todo-input');
+const addTodo = document.querySelector('.add-button')
+
+// const todoItemsList = document.querySelector('.todo-items');
+const list = document.querySelector('.bottom')
+
+var currentdate = new Date();
+var datetime = "Last Sync: " + currentdate.getHours() + ":" + currentdate.getMinutes();
 
 let todos = [];
-todoForm.addEventListener('submit',
-	function (event) {
-		event.preventDefault();
-		addTodo(todoInput.value);
-	}
-)
 
-function addTodo(item) {
-	if (item !== '') {
-		const todo = {
-			id: Date.now(),
-			name: item,
-			completed: false
-		};
-		todos.push(todo);
-		addLocalStorage(todos);
-		todoInput.value = '';
-	}
-}
+addTodo.onclick = (todos) => {
+	function add(todoInput) {
+		if (todoInput.length == 0) {
+			alert("Nothing to Todo")
+		} else {
+			let todoItem = document.createElement('div')
+			let left = document.createElement('div')
+			let span = document.createElement('h3')
+			let time = document.createElement('p')
 
-function renderTodos(todos) {
-	todoItemsList.innerHTML = '';
-	todos.forEach(function (item) {
-		const checked = item.completed ? 'checked' : null;
+			let delBtn = document.createElement('.div')
+			let delBtnIcon = doc.createElement('span')
 
-		const li = document.createElement('li');
-		li.setAttribute('class', 'item');
-		li.setAttribute('data-key', 'item.id');
-		if (item.completed === true) {
-			li.classList.add('checked');
+			todoItem.classList.add('todo-item')
+			left.classList.add('div')
+			span.innerText = todoInput.value
+			time.innerText = currentdate
+			delBtn.classList.add('delete-button')
+			delBtnIcon.innerHTML = "X"
+
+			bottom.append(todoItem)
+			todoItem.append(left, delBtn)
+			left.append(span, time)
+			delBtn.append(delBtnIcon)
 		}
-		li.innerHTML = `
-		<input type="checkbox" class="checkbox" &{checked}>
-		&{item.name}
-		<button class="delete-button">X</button>
-		`;
-		todoItemsList.append(li);
-	})
-}
-
-function addTolocalStorage(todos) {
-	localStorage.setItem('todos', JSON.stringify(todos));
-	renderTodos(todos);
-}
-
-function getFormLocalStorage() {
-	const reference = localStorage.getItem('todos');
-	if (reference) {
-		todos = JSON.parse(reference);
-		renderTodos(todos);
+		console.log(add);
 	}
 }
 
-function toggle(id) {
-	todos.forEach(function (item) {
-		if (item.id == id) {
-			item.completed = !item.completed;
-		}
-	});
-	addTolocalStorage(todos);
-}
-function deleteTodo(id) {
-	todos = todos.filter(function (item) {
-		return item.id != id;
-	});
-	addTolocalStorage();
-}
-getFormLocalStorage();
-todoItemsList.addEventListener('click', function (event) {
-	if (event.target.type === 'checkbox') {
-		toggle(event.target.parentElement.getAttribute('data-key'));
-	}
-	if (event.target.classList.container('delete-button')) {
-		deleteTodo(event.target.parentElement.getAttribute('data-key'));
-	}
-});
+add()
