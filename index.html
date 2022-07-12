@@ -6,25 +6,31 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="style.css">
-	<title>Todo</title>
+	<title>Таблица студентов</title>
 </head>
 
 <body>
-	<div class="top">
-		<h1>Todo List</h1>
-		<div class="center">
-			<form action="" class="todo-form">
-				<input type="text" class="todo-input" placeholder="Input Todo...">
-			</form>
-			<button onclick="newElement()" class="add-button">Add</button>
-		</div>
+<h1>ДОБАВЛЕНИЕ, ИЗМЕНЕНИЕ И УДАЛЕНИЕ ЭЛЕМЕНТА ИЗ ТАБЛИЦЫ</h1>
+<form action="" name="names">
+	<div class="nameBox">
+		<span>Имя</span>
+		<input type="text" placeholder="Bruce Reyes" name="name">
 	</div>
-	<hr>
-	<div class="bottom">
-
+	<div class="ageBox">
+		<span>Возраст</span>
+		<input type="numbers" placeholder="24" name="age">
 	</div>
+	<span></span>
+	<button class="show">Показать</button>
+</form>
+<div class="table">
+	<span class="id">No</span>
+	<span class="student">Имя студента</span>
+	<span class="birth">Год рождения</span>
+	<span class="actions">Действия</span>
+</div>
 
-	<script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 
 </html>
